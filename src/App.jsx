@@ -1,29 +1,19 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import TextInput from "./components/TextInput";
 
 function App() {
   // TODO: 로컬 스토리지에서 초기 상태로 사용할 값을 가져오세요. 새로고침 해도 기존 상태를 유지하는 것이 목적입니다.
   // 로컬스토리지에 값이 없을 경우 빈배열[] 로 설정하세요.
-  const [texts, setTexts] = useState(() => {
-    const savedTexts = localStorage.getItem("texts");
-    return savedTexts ? JSON.parse(savedTexts) : [];
-  });
-
-  const isInitialMount = useRef(true);
+  /*로컬스토리지에 있는 "text"를 getItem으로 가져온다.
+  그럼 json.parse는 문자열(string)을 객체로 바꿔준다 그렇지 않으면 [](배열)로 반환함. */
+  const [texts, setTexts] = useState(
+    JSON.parse(localStorage.getItem("texts")) || []
+  );
 
   useEffect(() => {
     // 상태가 변경될 때마다 로컬 스토리지에 저장합니다.
     // 초기 마운트 시에는 저장하지 않도록 합니다.
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-    } else {
-      localStorage.setItem("texts", JSON.stringify(texts));
-    }
-
-    // 컴포넌트 언마운트 시에 로컬 스토리지에서 상태를 제거합니다.
-    return () => {
-      localStorage.removeItem("texts");
-    };
+    localStorage.setItem("texts", JSON.stringify(texts));
   }, [texts]);
 
   const onAddText = (text) => {
